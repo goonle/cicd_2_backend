@@ -16,8 +16,8 @@ class RegisterAPIViewUnitTest(TestCase):
             "password": "TestPass123!"
         }
 
-    @patch('blogs_api.views.Token')  # ✅ Mock Token model
-    @patch('blogs_api.views.RegisterSerializer')  # ✅ Mock the serializer
+    @patch('blogs_api.views.Token')
+    @patch('blogs_api.views.RegisterSerializer')
     def test_register_successful(self, mock_serializer_class, mock_token_class):
         # Mock serializer behavior
         mock_serializer = MagicMock()
@@ -62,9 +62,9 @@ class LoginAPIViewUnitTest(TestCase):
             "password": "MockPass123!"
         }
 
-    @patch('blogs_api.views.Token')  # 👈 Patch the Token model
-    @patch('blogs_api.views.authenticate')  # 👈 Patch the authenticate function
-    @patch('blogs_api.views.LoginSerializer')  # 👈 Patch the serializer
+    @patch('blogs_api.views.Token')
+    @patch('blogs_api.views.authenticate')
+    @patch('blogs_api.views.LoginSerializer')
     def test_login_success(self, mock_serializer_class, mock_authenticate, mock_token_class):
         # Setup mocked serializer
         mock_serializer = MagicMock()
@@ -95,7 +95,7 @@ class LoginAPIViewUnitTest(TestCase):
         mock_serializer.validated_data = self.data
         mock_serializer_class.return_value = mock_serializer
 
-        mock_authenticate.return_value = None  # ❌ User not authenticated
+        mock_authenticate.return_value = None
 
         request = self.factory.post(self.url, data=self.data, content_type='application/json')
         response = self.view(request)
