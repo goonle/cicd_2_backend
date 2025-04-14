@@ -9,14 +9,21 @@ from .serializers import RegisterSerializer
 from drf_yasg.utils import swagger_auto_schema
 
 
-class registerapi(APIView):
+# Secure & well-structured Register API
+class RegisterAPIView(APIView):
+    permission_classes = [AllowAny]
+
     @swagger_auto_schema(
         request_body=RegisterSerializer,
         responses={201: "User registered successfully", 400: "Bad request"},
     )
     def post(self, request):
-        username = request.data['username']
-        password = request.data['password']
-        user = User.objects.create(username=username, password=password)
-        token = Token.objects.create(user=user)
-        return Response({"token": token.key}, status=201)
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            token, _ = Token.objects.get_or_create(user=user)
+            return Response(
+                {"message": "User registered successfully", "token": token.key},
+                status=status.HTTP_201_CREATED,
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
