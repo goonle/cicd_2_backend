@@ -1,0 +1,22 @@
+{
+    "framework": null,
+    "builds": [
+      {
+        "src": "blogs_api_project/wsgi.py",
+        "use": "@vercel/python",
+        "config": { "maxLambdaSize":  "15mb", "runtime":  "python3.9" }
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "blogs_api_project/wsgi.py",
+        "headers": {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS, DELETE, PUT",
+          "Access-Control-Allow-Credentials": "true",
+          "Access-Control-Allow-Headers" : "Authorization, Content-Type, X-CSRF-Token"
+        }
+      }
+    ]
+  }
