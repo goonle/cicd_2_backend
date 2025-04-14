@@ -49,3 +49,4 @@ class LoginAPIView(APIView):
                 return Response({"message": "Login successful", "token": token.key}, status=status.HTTP_200_OK)
             return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
