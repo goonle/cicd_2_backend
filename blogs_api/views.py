@@ -1,12 +1,11 @@
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, logout
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
-from django.contrib.auth.models import User
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
-from .serializers import RegisterSerializer, LoginSerializer
+from .serializers import LoginSerializer, LogoutSerializer, RegisterSerializer
 from drf_yasg.utils import swagger_auto_schema
 
 
@@ -50,3 +49,18 @@ class LoginAPIView(APIView):
             return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+# Logout API
+class LogoutAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        request_body=LogoutSerializer,
+        responses={200: "Logged out successfully", 401: "Unauthorized"},
+    )
+    def post(self, request):
+        request.user.auth_token.delete()
+        logout(request)
+        return Response(
+            {"message": "Logged out successfully"}, status=status.HTTP_200_OK
+        )

@@ -24,5 +24,7 @@ class LoginSerializer(serializers.Serializer):
         return data
 
 
+class LogoutSerializer(serializers.Serializer):
+    pass
 
 
