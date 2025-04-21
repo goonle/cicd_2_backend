@@ -35,10 +35,11 @@ class BlogSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source="author.username")
     likes_count = serializers.SerializerMethodField()
     liked = serializers.SerializerMethodField()
+    is_author = serializers.SerializerMethodField()
 
     class Meta:
         model = Blog
-        fields = ["id", "title", "content", "author", "created_at", "likes_count", "liked"]
+        fields = ["id", "title", "content", "author", "created_at", "likes_count", "liked", "is_author"]
 
     def get_likes_count(self, obj):
         return obj.likes.count()
@@ -48,3 +49,7 @@ class BlogSerializer(serializers.ModelSerializer):
         if user.is_authenticated:
             return Like.objects.filter(user=user, blog=obj).exists()
         return False
+
+    def get_is_author(self, obj):
+        user = self.context["request"].user
+        return user.is_authenticated and obj.author == user
