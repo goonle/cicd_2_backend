@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
-from blogs_api.models import Blog
+from blogs_api.models import Blog, Like
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -34,10 +34,17 @@ class LogoutSerializer(serializers.Serializer):
 class BlogSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source="author.username")
     likes_count = serializers.SerializerMethodField()
+    liked = serializers.SerializerMethodField()
 
     class Meta:
         model = Blog
-        fields = ["id", "title", "content", "author", "created_at", "likes_count"]
+        fields = ["id", "title", "content", "author", "created_at", "likes_count", "liked"]
 
     def get_likes_count(self, obj):
         return obj.likes.count()
+
+    def get_liked(self, obj):
+        user = self.context["request"].user
+        if user.is_authenticated:
+            return Like.objects.filter(user=user, blog=obj).exists()
+        return False
